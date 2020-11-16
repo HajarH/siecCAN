@@ -7,7 +7,7 @@
 
 import cv2
 import time
-import detectnet_camera_custom2 as detect
+import detectnet_camera_custom_siec as detect
 
 # gstreamer_pipeline returns a GStreamer pipeline for capturing from the CSI camera
 # Defaults to 1280x720 @ 60fps
