@@ -46,27 +46,43 @@ def gstreamer_pipeline(
 
 
 def show_camera():
+    #We init neural networks
+    print("\nSTART CNN INIT\n")
+    net_human = detect.Multiped_Init()
+    print("\nMULTIPED INIT IS DONE\n")
+    net_hurdles = detect.Hurdles_Init()
+    print("\nHURDLES INIT IS DONE, CNNs OK\n")
+    time.sleep(2)
+
+    print("\nSTART CAMERA INIT\n")
     # To flip the image, modify the flip_method parameter (0 and 2 are the most common)
     print(gstreamer_pipeline(flip_method=0))
     cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
     if cap.isOpened():
-        # Take a picture every second
-        #im_counter=0
+        print("\nCAMERA START IS DONE\n")
+
+        #im_counter=0 #If we store images 
         cur_time = 0
-        hello = 1
+        hello = 1 #To do the loop once
+
         while hello:
-            #time.sleep(1)
-            hello = 0
-            cur_time = time.clock() - cur_time
-	    #print('Start get picture\n')
+            hello = 0 #To do the loop once
+            cur_time = time.clock() - cur_time #Measure loop execution time
+            #Get Picture
             ret_val, img = cap.read()
-            #im_counter += 1
-            #print('Picture taken\n')
+            #im_counter += 1 #I we store images
+            
+            #Store image taken
             cv2.imwrite('./images/currentPic.png', img)
-	    #print('Picture Saved\n')
 
             #Process Image Detection
-            detect.Imageprocessing()
+            print("\nSTART HUMAN DETECTION\n")
+            time.sleep(2)
+            detect.Imageprocessing(net_human, "./treated_current_pic_human_detection.png")
+            print("\nHUMAN DETECTION DONE, START HURDLES DETECTION\n")
+            time.sleep(2)
+            detect.Imageprocessing(net_hurdles, "./treated_current_pic_hurdles.png")
+            print("\nHURDLES DETECTION DONE, DETECTION OK\n")
 
             # This also acts as
             keyCode = cv2.waitKey(30) & 0xFF

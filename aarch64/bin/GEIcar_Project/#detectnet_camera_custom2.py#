@@ -88,7 +88,7 @@ def Imageprocessing(net, output_pic_name):
                 net.PrintProfilerTimes()
 
                 # exit on input/output EOS
-                if not input.IsStreaming() or not output.IsStreaming():
+                if not input.IsStreaming() or not output.IsStreaming():net_human = Multiped_Init()
                         break
 
 
