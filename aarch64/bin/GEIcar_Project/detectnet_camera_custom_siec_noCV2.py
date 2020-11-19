@@ -73,19 +73,21 @@ def Imageprocessing(net, input, output_pic_name):
         # print the detections
         #print("detected {:d} objects in image".format(len(detections)))
 
-        for detection in detections:
-                print("\nWe detected" + detection.GetClassDesc())
-                print(type(detections[nbr]))
+        #for detection in detections:
+                #print("\nWe detected a " + net.GetClassDesc(detection.ClassID) + "\n")
+                #print(type(detections[nbr]))
 
         # render the image
         #output.Render(img)
-        jetson.utils.saveImage(output_pic_name, img) #only save the image
+        #jetson.utils.saveImage(output_pic_name, img) #only save the image
 
         # update the title bar
         #output.SetStatus("{:s} | Network {:.0f} FPS".format(network, net.GetNetworkFPS()))
 
         # print out performance info
         #net.PrintProfilerTimes()
+
+        return detections
 
 
 if __name__ == "__main__":

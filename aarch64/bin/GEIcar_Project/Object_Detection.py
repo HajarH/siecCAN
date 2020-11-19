@@ -12,7 +12,7 @@ import numpy as np
 import os
 
 #GLOBAL VARIABLES
-NUMBER_OF_ITERATION = 2 #Sets the number of picture analysis, set to -1 if you want infinite loop
+NUMBER_OF_ITERATION = 1 #Sets the number of picture analysis, set to -1 if you want infinite loop
 
 """
 This function will use the arrays created while running the software was running
@@ -48,10 +48,10 @@ def main():
     while (loop_counter < NUMBER_OF_ITERATION or NUMBER_OF_ITERATION == -1):
 
         #We process human detection
-        #print("\nSTART HUMAN\n")
+        print("\nSTART HUMAN\n")
 
         delta_time_human = time.clock() #Measure execution time START
-        detect.Imageprocessing(net_human, input, "./treated_current_pic_human_detection.png")
+        human_detections = detect.Imageprocessing(net_human, input, "./treated_current_pic_human_detection.png")
         delta_time_human = time.clock() - delta_time_human #Measure execution time END
         #Store the value for later analysis
         tab_delta_time_human = np.append(tab_delta_time_human, delta_time_human)
@@ -61,7 +61,7 @@ def main():
 
         #We process hurdles detection
         delta_time_hurdles = time.clock() #Measure execution time START
-        detect.Imageprocessing(net_hurdles, input, "./treated_current_pic_hurdles.png")
+        hurdles_detections = detect.Imageprocessing(net_hurdles, input, "./treated_current_pic_hurdles.png")
         delta_time_hurdles = time.clock() - delta_time_hurdles #Measure execution time EN
         #Store the value for later analysis
         tab_delta_time_hurdles = np.append(tab_delta_time_hurdles, delta_time_hurdles)
@@ -71,7 +71,16 @@ def main():
         #print("\nEND LOOP\n")
         #time.sleep(10)
 
+        #Enumerate all the detections for human detection
+        for detection in human_detections:
+                print("\nWe detected a " + net_human.GetClassDesc(detection.ClassID) + "\n")
+
+        #Enumerate all the detections for hurdles detection
+        for detection in hurdles_detections:
+                print("\nWe detected a " + net_hurdles.GetClassDesc(detection.ClassID) + "\n")
+
         loop_counter +=1 #Update loop counter
+        time.sleep(3)
 
 
     return tab_delta_time_human, tab_delta_time_hurdles
