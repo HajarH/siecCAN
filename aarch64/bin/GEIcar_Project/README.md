@@ -1,15 +1,16 @@
 author = benistant
 
-FILES LIST-------------------------
-      CUSTOM PACKAGES
+#FILES LIST-------------------------
+CUSTOM PACKAGES
       - detectnet_camera_custom_original.py
       - detectnet_camera_custom_siec_noCV2.py
       - execution_time_analysis.py
 
-      MAIN
-      - Object_Detection.py
+#MAIN
+      - Object_Detection.py (no thread)
+      - Object_Detection_Thread.py (with thread)
 
-HOW IT WORKS-----------------------
+#HOW IT WORKS
 
 The main software is in "Object_Detection.py"
 

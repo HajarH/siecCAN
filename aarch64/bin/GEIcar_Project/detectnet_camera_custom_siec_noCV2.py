@@ -41,11 +41,11 @@ def Multiped_Init():
 
 def Hurdles_Init():
         #Variables
-        network = "ssd-mobilenet-v2"
+        network = "hurdles_final"
         threshold = 0.5
-        arguments = ['--model=networks/hurdles/ssd-mobilenet.onnx', '--labels=networks/hurdles/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes']
+        arguments = ['--model=networks/hurdles_final/hurdles_final.onnx', '--labels=networks/hurdles_final/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes']
         Overlay = "box,labels,conf"
-
+ 
          # load the object detection network
         net = jetson.inference.detectNet(network, arguments, threshold)
 
