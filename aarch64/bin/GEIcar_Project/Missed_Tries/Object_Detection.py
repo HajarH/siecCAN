@@ -12,7 +12,7 @@ import numpy as np
 import os
 
 #GLOBAL VARIABLES
-NUMBER_OF_ITERATION = 1 #Sets the number of picture analysis, set to -1 if you want infinite loop
+NUMBER_OF_ITERATION = 3 #Sets the number of picture analysis, set to -1 if you want infinite loop
 
 """
 This function will use the arrays created while running the software was running
