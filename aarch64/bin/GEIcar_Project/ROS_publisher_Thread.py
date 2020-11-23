@@ -40,7 +40,7 @@ class ROS_publisher(Thread):
             glob.detection_number.MUT.acquire()
             
             #Used for debug
-            rospy.loginfo(glob.detection_number.value)
+            #rospy.loginfo(glob.detection_number.value)
             
             #published the message
             glob.pub.publish(glob.detection_number.value)

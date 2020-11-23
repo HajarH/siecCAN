@@ -11,3 +11,5 @@ detection_done = Event()
 sending_done = Event()
 
 pub = 0
+
+tab_delta_time_loop = []
