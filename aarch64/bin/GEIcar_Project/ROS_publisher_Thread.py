@@ -29,35 +29,45 @@ class ROS_publisher(Thread):
         """
 
         #Specify the rate (we do note need it here)
-        #rate = rospy.Rate(10) # 10hz
+        #rate = rospy.Rate(100) # 100hz
+
+        current_flag_value = 0
 
         while not rospy.is_shutdown():
-            #Wait event detection_done
-            glob.detection_done.wait()
-            glob.detection_done.clear()
 
-            #Acquire mutex for detection_number
-            glob.detection_number.MUT.acquire()
-            
-            #Used for debug
-            #rospy.loginfo(glob.detection_number.value)
-            
-            #published the message
-            glob.pub.publish(glob.detection_number.value)
+            #We update the value of detection_flag
+            #print("\nGET FLAG VALUE\n") #Debug
+            glob.detection_flag.MUT.acquire()
+            current_flag_value = glob.detection_flag.value
+            glob.detection_flag.MUT.release()
 
-            #Release mutex for detection_number
-            glob.detection_number.MUT.release()
+            #print("\nREACT TO DETECTION IF SOMETHING IS DETECTED\n") #Debug
+            if (current_flag_value == 1): #if detection threads detect something we stop ROS periodic sending for 1sec
+                #print("\nSOMETHING IS DETECTED\n") #Debug
+                #print("\nCLEAR FLAG\n") #Debug                
+                glob.detection_flag.MUT.acquire()
+                glob.detection_flag.value = 0
+                glob.detection_flag.MUT.release()
 
-            #Send event sending_done
-            glob.sending_done.set()
+                #Periodic sending out for 1 sec
+                #print("\nSENDIND DEACTIVATED\n") #Debug
+                time.sleep(5)
+                #print("\nSENDIND REACTIVATED\n") #Debug
 
+            else:
+                #print("\nSEND RAS MESSAGE ON ROS TOPIC\n") #Debug
+                glob.pub.MUT.acquire()
+                glob.pub.value.publish(0)
+                glob.pub.MUT.release()
+                
             #rate.sleep() #Only if we uses fixed rate
 
 #MAIN PROGRAM
 if __name__ == "__main__":
 
-    #Create the topic "detection"and the publisher 
-    glob.pub = rospy.Publisher('detection', UInt8, queue_size=10)
+    #Create the topic "detection"and the publisher
+    print("Init ROS topic\n") #Debug
+    glob.pub.value = rospy.Publisher('detection', UInt8, queue_size=10)
     #Specify the nodes name
     rospy.init_node('talker', anonymous=True)
 

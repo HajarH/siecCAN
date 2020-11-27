@@ -1,15 +1,15 @@
 from threading import Lock, Event
 
-class detection_number_class:
+class mutex_variable:
     def __init__(self):
         self.value = 0
         self.MUT = Lock()
 
-detection_number = detection_number_class()
 
-detection_done = Event()
-sending_done = Event()
 
-pub = 0
+detection_flag = mutex_variable()
+detection_flag.value = 1
+
+pub = mutex_variable()
 
 tab_delta_time_loop = []

@@ -35,7 +35,7 @@ def detection_to_ROS_number(net_number, class_number):
             return 7
         elif class_number == 5: #Dog
             return 8
-        elif class_number == 6: #Dog
+        elif class_number == 6: #Motorcycle
             return 9
         else:
             return 0
@@ -97,7 +97,7 @@ class Detection(Thread):
 
                 #Enumerate all the detections for human detection
                 for detection in detections_human:
-                        #print("\nWe detected a " + net_human.GetClassDesc(detection.ClassID) + "\n")
+                        print("\nWe detected a " + net_human.GetClassDesc(detection.ClassID) + "\n")
 
                         #Acquire detection_number mutex to update it
                         glob.detection_number.MUT.acquire()
@@ -121,7 +121,7 @@ class Detection(Thread):
 
                 #Enumerate all the detections for hurdles detection
                 for detection in detections_hurdles:
-                        #print("\nWe detected a " + net_hurdles.GetClassDesc(detection.ClassID) + "\n")
+                        print("\nWe detected a " + net_hurdles.GetClassDesc(detection.ClassID) + "\n")
                         #Acquire detection_number mutex to update it
                         glob.detection_number.MUT.acquire()
                         glob.detection_number.value = detection_to_ROS_number(1, detection.ClassID)
