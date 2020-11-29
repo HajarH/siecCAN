@@ -27,13 +27,15 @@ class ROS_publisher(Thread):
         #Specify the nodes name
         rospy.init_node('talker', anonymous=True)
         """
-
+        time.sleep(15)
         #Specify the rate (we do note need it here)
-        #rate = rospy.Rate(10) # 10hz
+        rate = rospy.Rate(10) # 10hz
 
         current_flag_value = 0
 
         while not rospy.is_shutdown():
+
+            delta_time_loop_ROS = time.clock() #Measure execution time START
 
             #We update the value of detection_flag
             #print("\nGET FLAG VALUE\n") #Debug
@@ -51,7 +53,7 @@ class ROS_publisher(Thread):
 
                 #Periodic sending out for 1 sec
                 #print("\nSENDIND DEACTIVATED\n") #Debug
-                time.sleep(2)
+                time.sleep(1)
                 #print("\nSENDIND REACTIVATED\n") #Debug
 
             else:
@@ -59,8 +61,15 @@ class ROS_publisher(Thread):
                 glob.pub.MUT.acquire()
                 glob.pub.value.publish(0)
                 glob.pub.MUT.release()
+
+            delta_time_loop_ROS = time.clock() - delta_time_loop_ROS #Measure execution time END
+            #Store the value for later analysis
+            if(glob.loop_counter_ROS <= glob.NUMBER_OF_LOOPS_FOR_TEST):
+                glob.tab_delta_time_loop_ROS = np.append(glob.tab_delta_time_loop_ROS, delta_time_loop_ROS)
+
+            glob.loop_counter_ROS += 1 #Update loop counter
                 
-            #rate.sleep() #Only if we uses fixed rate
+            rate.sleep() #Only if we uses fixed rate
 
 #MAIN PROGRAM
 if __name__ == "__main__":

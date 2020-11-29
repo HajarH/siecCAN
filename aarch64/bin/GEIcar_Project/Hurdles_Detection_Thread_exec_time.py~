@@ -24,49 +24,62 @@ from std_msgs.msg import UInt8
 #GLOBAL VARIABLES
 import global_variables as glob
 
-#function that return the right number regarding what was detected for the human net
-def human_detection_to_ROS_number(class_number):
-    if class_number == 0: #Person
-        return 1
-    elif class_number == 2: #Baggage 
-        return 2
+#function that return the right number regarding what was detected for Hurdles CNN
+def hurdles_detection_to_ROS_number(class_number):
+    if class_number == 1: #Bus
+        return 4
+    elif class_number == 2: #Car
+        return 5
+    elif class_number == 3: #Bicycle
+        return 6
+    elif class_number == 4: #Cat
+        return 7
+    elif class_number == 5: #Dog
+        return 8
+    elif class_number == 6: #Motorcycle
+        return 9
     else:
         return 0
             
 
 #Class for CNNs initializations and inferences
-class Human_Detection(Thread):
+class Hurdles_Detection(Thread):
 
     def __init__(self):
         Thread.__init__(self)
 
     def run(self):
-        #We init human detection CNN
-        #print("\nSTART HUMAN CNN INIT\n") #Debug
-        net_human = detect.Multiped_Init()
-        #print("\nMULTIPED INIT IS DONE\n") #Debug
+        #We init hurdles detection CNN
+        #print("\nHURDLES INIT START\n") #Debug
+        net_hurdles = detect.Hurdles_Init()
+        #print("\nHURDLES INIT IS DONE\n") #Debug
+        #time.sleep(2) #Debug
+
+        #We init the Camera as an input
+        input = detect.Video_Source_init("csi://0")
 
         #Get detectable classes names
         """
-        print("FOR HUMANS:\n")
-        for i in range(0,net_human.GetNumClasses()):
-            print("Number ", i, " :", net_human.GetClassDesc(i),"END")
+        print("FOR HURDLES:\n")
+        for i in range(0,net_hurdles.GetNumClasses()):
+            print("Number ", i, " :", net_hurdles.GetClassDesc(i),"END")
             print("\n")
         """
 
-        print("HUMAN INIT WENT WELL\n") #Debug
-        time.sleep(2) #Just to get enough time to see that init went well
+        print("INITS WENT WELL\n")
+        time.sleep(2) #Just to have time to see the debug message
 
         while True:
+            #print("\nSTART HURDLES DETECTION\n") #Debug
+            #time.sleep(2) #Just to have time to see the debug message
 
-            #We process human detection
-            #print("\nSTART HUMAN\n") #Debug
-            detections_human = detect.Imageprocessing(net_human, "./treated_current_pic_human_detection.png")
-            #print("Human detection done\n") #Debug
-            #time.sleep(2) #Just to get enough time to see debug message
+            #We process hurdles detection
+            detections_hurdles = detect.Imageprocessing(net_hurdles, input, "./treated_current_pic_hurdles.png")
 
+            #print("Hurdles detection done\n") #Debug
+            #time.sleep(2) #Just to have time to see the debug message
             #if we detect something set flag to block ROS periodic sending, ROS thread clears it
-            if (len(detections_human) != 0):
+            if (len(detections_hurdles) != 0):
                 glob.detection_flag.MUT.acquire()
                 glob.detection_flag.value = 1
                 glob.detection_flag.MUT.release()
@@ -74,18 +87,18 @@ class Human_Detection(Thread):
             glob.detection_flag.MUT.acquire() #Debug
             print("FLAG = ", glob.detection_flag.value) #Debug
             glob.detection_flag.MUT.release() #Debug
-            
-            #Enumerate all the detections for human detection if there is one
-            for detection in detections_human:
-                    print("\nWe detected a " + net_human.GetClassDesc(detection.ClassID) + "\n")
-                    glob.pub.MUT.acquire()
-                    glob.pub.value.publish(human_detection_to_ROS_number(detection.ClassID))
-                    glob.pub.MUT.release()
 
-            #print("\nFINISH HUMAN DETECTION\n") #Debug
-            #time.sleep(2) #Just to get enough time to see debug message 
+            #Enumerate all the detections for hurdles detection
+            for detection in detections_hurdles:
+                    print("\nWe detected a " + net_hurdles.GetClassDesc(detection.ClassID) + "\n")
+                    glob.pub.MUT.acquire()
+                    glob.pub.value.publish(hurdles_detection_to_ROS_number(detection.ClassID))
+                    glob.pub.MUT.release()
+ 
+            #print("\nFINISH HURDLES\n") #Debug
 
             #print("\nEND LOOP\n") #Debug
+
             #We wait one second between each loop
             #time.sleep(1)
         
@@ -99,7 +112,7 @@ if __name__ == "__main__":
     print("ROS Topic created\n")
     
     # Création des threads
-    detection_thread = Human_Detection()
+    detection_thread = Detection()
 
     # Lancement des threads
     detection_thread.start()

@@ -5,6 +5,9 @@ from Human_Detection_Thread import Human_Detection
 from Hurdles_Detection_Thread import Hurdles_Detection
 from ROS_publisher_Thread import ROS_publisher
 
+#Import Video init package
+import detectnet_camera_custom_siec_noCV2 as detect
+
 
 #Import global variables
 import global_variables as glob
@@ -22,14 +25,17 @@ if __name__ == "__main__":
     rospy.init_node('talker', anonymous=True)
     print("ROS Topic created\n")
 
+    #Init video input
+    glob.input.value = detect.Video_Source_init("csi://0")
+
     #Create threads
     human_detection_thread = Human_Detection()
     hurdles_detection_thread = Hurdles_Detection()
     ros_thread = ROS_publisher()
-
+    
     #Run threads
     human_detection_thread.start()
-    #hurdles_detection_thread.start()
+    hurdles_detection_thread.start()
     ros_thread.start()
 
     #Infinite loop because detection_thread has a while true

@@ -66,7 +66,10 @@ class Hurdles_Detection(Thread):
         print("HURDLES INIT WENT WELL\n")
         time.sleep(2) #Just to have time to see the debug message
 
-        while True:
+        while ( (glob.loop_counter_human <= glob.NUMBER_OF_LOOPS_FOR_TEST) or (glob.loop_counter_hurdles <= glob.NUMBER_OF_LOOPS_FOR_TEST) or (glob.loop_counter_ROS <= glob.NUMBER_OF_LOOPS_FOR_TEST) ):
+
+            delta_time_loop_hurdles = time.clock() #Measure execution time START
+            
             #print("\nSTART HURDLES DETECTION\n") #Debug
             #time.sleep(2) #Just to have time to see the debug message
 
@@ -81,9 +84,9 @@ class Hurdles_Detection(Thread):
                 glob.detection_flag.value = 1
                 glob.detection_flag.MUT.release()
 
-            glob.detection_flag.MUT.acquire() #Debug
-            print("FLAG = ", glob.detection_flag.value) #Debug
-            glob.detection_flag.MUT.release() #Debug
+            #glob.detection_flag.MUT.acquire() #Debug
+            #print("FLAG = ", glob.detection_flag.value) #Debug
+            #glob.detection_flag.MUT.release() #Debug
 
             #Enumerate all the detections for hurdles detection
             for detection in detections_hurdles:
@@ -91,6 +94,13 @@ class Hurdles_Detection(Thread):
                     glob.pub.MUT.acquire()
                     glob.pub.value.publish(hurdles_detection_to_ROS_number(detection.ClassID))
                     glob.pub.MUT.release()
+
+            delta_time_loop_hurdles = time.clock() - delta_time_loop_hurdles #Measure execution time END
+            #Store the value for later analysis
+            if(glob.loop_counter_hurdles <= glob.NUMBER_OF_LOOPS_FOR_TEST):
+                glob.tab_delta_time_loop_hurdles = np.append(glob.tab_delta_time_loop_hurdles, delta_time_loop_hurdles)
+
+            glob.loop_counter_hurdles += 1
  
             #print("\nFINISH HURDLES\n") #Debug
 

@@ -27,6 +27,9 @@ import jetson.utils
 import sys
 import time
 
+#GLOBAL VARIABLES
+import global_variables as glob
+
 def Multiped_Init():
         #Variables
         network = "multiped"
@@ -34,7 +37,7 @@ def Multiped_Init():
         arguments = []
         Overlay = "box,labels,conf"
 
-         # load the object detection network
+        # load the object detection network
         net = jetson.inference.detectNet(network, arguments, threshold)
 
         return net
@@ -58,14 +61,16 @@ def Video_Source_init(type_of_camera):
         return input
         
 
-def Imageprocessing(net, input, output_pic_name):
+def Imageprocessing(net, output_pic_name):
         #Variables
         input_URI = ""
         output_URI = ""
         Overlay = "box,labels,conf"
 
         # capture the next image
-        img = input.Capture()
+        glob.input.MUT.acquire()
+        img = glob.input.value.Capture()
+        glob.input.MUT.release()
 
         # detect objects in the image (with overlay)
         detections = net.Detect(img, overlay=Overlay)
@@ -101,19 +106,18 @@ if __name__ == "__main__":
 
         #We initialize the Camera as an input
         #print("\nCAMERA INIT IS DONE \n")
-        input = Video_Source_init("csi://0")
+        glob.input.value = Video_Source_init("csi://0")
         #print("\nCAMERA INIT IS DONE \n")
 
         while True:
                 print("\nSTART \n")
                    
                 #print("\nSTART HUMAN DETECTION \n")
-                #time.sleep(3)
-                Imageprocessing(net_human, input, "./treated_current_pic_human_detection.png")
+                #time.sleep(2)
+                Imageprocessing(net_human, "./treated_current_pic_human_detection.png")
 
-                #print("\nFINISH HUMAN, START HURDLES \n")
-                #time.sleep(3)
-                Imageprocessing(net_hurdles, input, "./treated_current_pic_hurdles.png")
+                #print("\nFINISH HUMAN DETECTION\n")
+                #time.sleep(2)
 
                 print("\nEND\n")
 

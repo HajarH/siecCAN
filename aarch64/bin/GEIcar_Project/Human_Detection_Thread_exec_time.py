@@ -57,7 +57,9 @@ class Human_Detection(Thread):
         print("HUMAN INIT WENT WELL\n") #Debug
         time.sleep(2) #Just to get enough time to see that init went well
 
-        while True:
+        while ( (glob.loop_counter_human <= glob.NUMBER_OF_LOOPS_FOR_TEST) or (glob.loop_counter_hurdles <= glob.NUMBER_OF_LOOPS_FOR_TEST) or (glob.loop_counter_ROS <= glob.NUMBER_OF_LOOPS_FOR_TEST) ):
+
+            delta_time_loop_human = time.clock() #Measure execution time START
 
             #We process human detection
             #print("\nSTART HUMAN\n") #Debug
@@ -71,9 +73,9 @@ class Human_Detection(Thread):
                 glob.detection_flag.value = 1
                 glob.detection_flag.MUT.release()
 
-            glob.detection_flag.MUT.acquire() #Debug
-            print("FLAG = ", glob.detection_flag.value) #Debug
-            glob.detection_flag.MUT.release() #Debug
+            #glob.detection_flag.MUT.acquire() #Debug
+            #print("FLAG = ", glob.detection_flag.value) #Debug
+            #glob.detection_flag.MUT.release() #Debug
             
             #Enumerate all the detections for human detection if there is one
             for detection in detections_human:
@@ -81,6 +83,12 @@ class Human_Detection(Thread):
                     glob.pub.MUT.acquire()
                     glob.pub.value.publish(human_detection_to_ROS_number(detection.ClassID))
                     glob.pub.MUT.release()
+
+            delta_time_loop_human = time.clock() - delta_time_loop_human #Measure execution time END
+            #Store the value for later analysis
+            if (glob.loop_counter_human <= glob.NUMBER_OF_LOOPS_FOR_TEST):
+                glob.tab_delta_time_loop_human = np.append(glob.tab_delta_time_loop_human, delta_time_loop_human)
+            glob.loop_counter_human += 1 #Update loop counter
 
             #print("\nFINISH HUMAN DETECTION\n") #Debug
             #time.sleep(2) #Just to get enough time to see debug message 

@@ -29,7 +29,7 @@ class ROS_publisher(Thread):
         """
 
         #Specify the rate (we do note need it here)
-        #rate = rospy.Rate(10) # 10hz
+        #rate = rospy.Rate(100) # 100hz
 
         current_flag_value = 0
 
@@ -51,7 +51,7 @@ class ROS_publisher(Thread):
 
                 #Periodic sending out for 1 sec
                 #print("\nSENDIND DEACTIVATED\n") #Debug
-                time.sleep(2)
+                time.sleep(5)
                 #print("\nSENDIND REACTIVATED\n") #Debug
 
             else:

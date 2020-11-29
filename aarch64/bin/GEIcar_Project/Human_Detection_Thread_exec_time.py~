@@ -23,6 +23,7 @@ from std_msgs.msg import UInt8
 
 #GLOBAL VARIABLES
 import global_variables as glob
+NUMBER_OF_LOOPS_FOR_TEST 100
 
 #function that return the right number regarding what was detected for the human net
 def human_detection_to_ROS_number(class_number):
@@ -46,6 +47,9 @@ class Human_Detection(Thread):
         net_human = detect.Multiped_Init()
         #print("\nMULTIPED INIT IS DONE\n") #Debug
 
+        #We init the Camera as an input
+        input = detect.Video_Source_init("csi://0")
+
         #Get detectable classes names
         """
         print("FOR HUMANS:\n")
@@ -54,14 +58,15 @@ class Human_Detection(Thread):
             print("\n")
         """
 
-        print("HUMAN INIT WENT WELL\n") #Debug
+        print("INITS WENT WELL\n") #Debug
         time.sleep(2) #Just to get enough time to see that init went well
 
+        loop_counter = 0
         while True:
 
             #We process human detection
             #print("\nSTART HUMAN\n") #Debug
-            detections_human = detect.Imageprocessing(net_human, "./treated_current_pic_human_detection.png")
+            detections_human = detect.Imageprocessing(net_human, input, "./treated_current_pic_human_detection.png")
             #print("Human detection done\n") #Debug
             #time.sleep(2) #Just to get enough time to see debug message
 
@@ -71,9 +76,9 @@ class Human_Detection(Thread):
                 glob.detection_flag.value = 1
                 glob.detection_flag.MUT.release()
 
-            glob.detection_flag.MUT.acquire() #Debug
-            print("FLAG = ", glob.detection_flag.value) #Debug
-            glob.detection_flag.MUT.release() #Debug
+            #glob.detection_flag.MUT.acquire() #Debug
+            #print("FLAG = ", glob.detection_flag.value) #Debug
+            #glob.detection_flag.MUT.release() #Debug
             
             #Enumerate all the detections for human detection if there is one
             for detection in detections_human:
